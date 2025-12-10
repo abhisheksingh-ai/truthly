@@ -35,7 +35,18 @@ func (h *UserController) CreateNewUser(ctx *gin.Context) {
 		return
 	}
 
-	// call the service 
-	response, err := 
+	// call the service
+	response, err := h.userService.CreateNewUser(ctx, &user)
+	if err != nil {
+		h.logger.Error(err.Error())
+		ctx.JSON(500, &dto.UserResponseDto{
+			Message: err.Error(),
+		})
+		return
+	}
 
+	h.logger.Info("New user created", "userId", response.UserId)
+	ctx.JSON(200, &dto.UserResponseDto{
+		UserId: response.UserId,
+	})
 }
