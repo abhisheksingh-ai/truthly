@@ -2,6 +2,7 @@ package main
 
 import (
 	"truthly/internals/controller"
+	"truthly/internals/model"
 	"truthly/internals/repository"
 	"truthly/internals/routes"
 	"truthly/internals/service"
@@ -27,6 +28,9 @@ func main() {
 	// Make the connection with sql
 	db := util.InitDb()
 	log.Info(db.Name())
+
+	// auto migrate
+	db.AutoMigrate(&model.User{})
 
 	router := gin.Default()
 
