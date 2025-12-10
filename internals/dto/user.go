@@ -5,7 +5,6 @@ import (
 )
 
 type UserRequestDto struct {
-	UserId       string `json:"userId,omitempty"`
 	FirstName    string `json:"firstName,omitempty"`
 	LastName     string `json:"lastName,omitempty"`
 	UserName     string `json:"userName,omitempty"`
@@ -29,7 +28,6 @@ type UserResponseDto struct {
 
 func ToModel(u *UserRequestDto) *model.User {
 	return &model.User{
-		UserId:       u.UserId,
 		FirstName:    u.FirstName,
 		LastName:     u.LastName,
 		UserName:     u.UserName,
