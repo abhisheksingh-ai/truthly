@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"context"
 	"log/slog"
+	"truthly/internals/model"
 
 	"gorm.io/gorm"
 )
 
 type ImageRepository interface {
-	InsertNewImage()
+	InsertNewImage(ctx context.Context, data *model.Image) (*model.Image, error)
 }
 
 type imageRepository struct {
@@ -23,6 +25,10 @@ func GetImageRepo(Db *gorm.DB, logger *slog.Logger) ImageRepository {
 	}
 }
 
-func (i *imageRepository) InsertNewImage() {
-
+func (i *imageRepository) InsertNewImage(ctx context.Context, data *model.Image) (*model.Image, error) {
+	var res model.Image
+	if err := i.Db.WithContext(ctx).Create(&res).Error; err != nil {
+		return nil, err
+	}
+	return &res, nil
 }
