@@ -12,11 +12,6 @@ type DescriptionReqDto struct {
 	City        string `json:"city"`
 }
 
-type DescriptionResDto struct {
-	DescriptionId   string
-	DescriptionData *model.Description
-}
-
 func ToDescriptionModel(d *DescriptionReqDto) *model.Description {
 	return &model.Description{
 		ImageId:     d.ImageId,

@@ -14,11 +14,6 @@ type AnalyticReqDto struct {
 	Comment int `json:"comment"`
 }
 
-type AnalyticResDto struct {
-	AnalyticId   string          `json:"analyticId"`
-	AnalyticData *model.Analytic `json:"analyticData"`
-}
-
 func ToAnalyticModel(a *AnalyticReqDto) *model.Analytic {
 	return &model.Analytic{
 		ImageId:       a.ImageId,

@@ -11,11 +11,6 @@ type CommentReqDto struct {
 	AllComments []model.Comment `json:"comments"`
 }
 
-type CommentResDto struct {
-	CommentId   string          `json:"commentId"`
-	CommentData *model.Commemts `json:"commentData"`
-}
-
 func ToCommentModel(c *CommentReqDto) *model.Commemts {
 	return &model.Commemts{
 		UserId:        c.UserId,

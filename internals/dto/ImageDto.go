@@ -7,11 +7,6 @@ type ImageReqDto struct {
 	ImageUrl string `json:"imageUrl"`
 }
 
-type ImageResDto struct {
-	ImageId   string       `json:"imageId"`
-	ImageData *model.Image `json:"imageData"`
-}
-
 func ToImageModel(i *ImageReqDto) *model.Image {
 	return &model.Image{
 		ImageUrl: i.ImageUrl,
