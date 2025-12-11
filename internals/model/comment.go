@@ -3,7 +3,8 @@ package model
 import "github.com/google/uuid"
 
 type Comment struct {
-	Value string
+	UserName string
+	Value    string
 }
 
 type Commemts struct {
@@ -11,9 +12,9 @@ type Commemts struct {
 	UserId        string `gorm:"column:UserId"`
 	ImageId       string `gorm:"column:ImageId"`
 	DescriptionId string `gorm:"column:DescriptionId"`
-	Analyticid    string `gorm:"column:Analyticid"`
+	AnalyticId    string `gorm:"column:Analyticid"`
 
-	Comments []Comment `gorm:"column:Comments"`
+	AllComments []Comment `gorm:"column:Comments"`
 }
 
 func (Commemts) TableName() string {
