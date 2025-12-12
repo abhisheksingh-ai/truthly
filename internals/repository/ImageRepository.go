@@ -26,9 +26,8 @@ func GetImageRepo(Db *gorm.DB, logger *slog.Logger) ImageRepository {
 }
 
 func (i *imageRepository) InsertNewImage(ctx context.Context, data *model.Image) (*model.Image, error) {
-	var res model.Image
-	if err := i.Db.WithContext(ctx).Create(&res).Error; err != nil {
+	if err := i.Db.WithContext(ctx).Create(data).Error; err != nil {
 		return nil, err
 	}
-	return &res, nil
+	return data, nil
 }

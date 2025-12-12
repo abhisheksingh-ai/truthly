@@ -8,6 +8,8 @@ import (
 )
 
 type Analytic struct {
+
+	// fk
 	AnalyticId    string `gorm:"column:AnalyticId; primaryKey"`
 	ImageId       string `gorm:"column:ImageId"`
 	DescriptionId string `gorm:"column:DescriptionId"`
@@ -18,12 +20,13 @@ type Analytic struct {
 	Share   int `gorm:"column:Share"`
 	Comment int `gorm:"column:Comment"`
 
+	// dates
 	CreatedAt time.Time `gorm:"column:CreatedAt; autoCreateTime"`
 	UpdatedAt time.Time `gorm:"column:UpdatedAt; autoUpdateTime"`
 }
 
 func (Analytic) TableName() string {
-	return "Analytic"
+	return "Analytics"
 }
 
 func (a *Analytic) BeforeCreate(tx *gorm.DB) (err error) {

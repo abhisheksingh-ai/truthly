@@ -45,15 +45,13 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	var result dto.ResponseDto
 
 	// File related data
-	file := postReq.File
 	fileHeader := postReq.FileHeader
-	userId := postReq.UserId
 
 	// unique file name
 	fileName := fmt.Sprintf("uploads/%d-%s", time.Now().Unix(), fileHeader.Filename)
 
 	//1. Upload the image on s3 bucket and get url
-	imgUrl, err := s.s3Uploader.UploadImage(file, fileName)
+	imgUrl, err := s.s3Uploader.UploadImage(fileHeader, fileName)
 	if err != nil {
 		s.logger.Error(err.Error())
 		return nil, err
@@ -62,11 +60,14 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	//2. Insert row in Image table
 	img := &model.Image{
 		ImageUrl: imgUrl,
-		UserId:   userId,
+		UserId:   postReq.UserId,
 	}
 
 	imgRes, err := s.imageRepo.InsertNewImage(ctx, img)
+
 	// 3. Insert the description row in table like city, state etc
+
+	description, err := 
 
 	// 4. Analytic like, share, comment initially set 0
 

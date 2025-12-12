@@ -1,20 +1,27 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"time"
 
-type Comment struct {
-	UserName string
-	Value    string
-}
+	"github.com/google/uuid"
+)
 
 type Commemts struct {
-	CommentId     string `gorm:"column:CommentId; primaryKey"`
+	// pk
+	CommentId string `gorm:"column:CommentId; primaryKey"`
+
+	// fk
 	UserId        string `gorm:"column:UserId"`
 	ImageId       string `gorm:"column:ImageId"`
 	DescriptionId string `gorm:"column:DescriptionId"`
-	AnalyticId    string `gorm:"column:Analyticid"`
+	AnalyticId    string `gorm:"column:AnalyticId"`
+
 	// initially it will be empty
-	AllComments []Comment `gorm:"column:Comments"`
+	Comment string `gorm:"column:Comment"`
+
+	// dates
+	CreatedAt time.Time `gorm:"column:CreatedAt; autoCreateTime"`
+	UpdatedAt time.Time `gorm:"column:UpdatedAt; autoUpdateTime"`
 }
 
 func (Commemts) TableName() string {
