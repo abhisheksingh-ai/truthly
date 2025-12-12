@@ -137,8 +137,9 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	return &dto.ResponseDto{
 		Status:  "success",
 		Message: "Post created",
-		ResultObj: map[string]string{
+		ResultObj: map[string]interface{}{
 			"imageUrl": imgRes.ImageUrl,
+			"imageId":  imgRes.ImageId,
 		},
 	}, nil
 }

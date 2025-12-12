@@ -2,7 +2,6 @@ package main
 
 import (
 	"truthly/internals/controller"
-	"truthly/internals/model"
 	"truthly/internals/repository"
 	"truthly/internals/routes"
 	"truthly/internals/service"
@@ -29,9 +28,6 @@ func main() {
 	db := util.InitDb()
 	log.Info(db.Name())
 
-	// auto migrate
-	db.AutoMigrate(&model.User{})
-
 	router := gin.Default()
 
 	//User:->  Initialize repo, service, controller
@@ -43,6 +39,29 @@ func main() {
 	userRoutes := routes.GetNewUserRoutes(userController)
 
 	userRoutes.RegisterRoutes(router)
+
+	// Post Image
+	// repos required
+	imageRepo := repository.GetImageRepo(db, log)
+	descriptionRepo := repository.GetDescriptionRepository(db, log)
+	analyticsRepo := repository.GetAnalyticRepository(db, log)
+	commentRepo := repository.GetCommentRepository(db, log)
+
+	s3Uploader, err := service.NewS3Uploader("uploads", log)
+	if err != nil {
+		log.Error(err.Error())
+	}
+
+	//services
+	postService := service.GetPostService(log, analyticsRepo, commentRepo,
+		descriptionRepo, imageRepo, s3Uploader,
+	)
+	postImageController := controller.GetNewPostImageController(log, postService)
+
+	// register routes
+	postImageRoute := routes.GetNewPostImageRoutes(postImageController)
+
+	postImageRoute.RegisterRoutes(router)
 
 	router.Run(":8181")
 }
