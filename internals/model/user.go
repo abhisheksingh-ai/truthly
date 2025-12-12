@@ -33,7 +33,7 @@ type User struct {
 }
 
 func (User) TableName() string {
-	return "User"
+	return "Users"
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
