@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log/slog"
+	"truthly/internals/dto"
 	"truthly/internals/service"
 
 	"github.com/gin-gonic/gin"
@@ -20,6 +21,27 @@ func GetNewPostImageController(logger *slog.Logger, postService service.PostServ
 	}
 }
 
-func (h *PostImageController) PostImage(c *gin.Context) {
+func (h *PostImageController) PostImage(ctx *gin.Context) {
+	// 1. Read values from dto
+	var postReqDto dto.PostRequestDto
+	if err := ctx.ShouldBind(&postReqDto); err != nil {
+		h.logger.Error(err.Error())
+		ctx.JSON(400, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
 
+	// 2. Call the service layer
+	resp, err := h.postService.UploadPost(ctx, &postReqDto)
+	if err != nil {
+		h.logger.Error(err.Error())
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// 3. return the response
+	ctx.JSON(200, resp)
 }

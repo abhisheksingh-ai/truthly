@@ -13,6 +13,5 @@ type PostRequestDto struct {
 	City        string `form:"city"`
 
 	// Image
-	File       multipart.File        `form:"file"`
-	FileHeader *multipart.FileHeader `form:"fileHeader"`
+	File *multipart.FileHeader `form:"file"`
 }
