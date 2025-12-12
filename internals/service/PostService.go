@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"mime/multipart"
 	"time"
 	"truthly/internals/dto"
 	"truthly/internals/model"
@@ -12,7 +11,7 @@ import (
 )
 
 type PostService interface {
-	UploadPost(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, userId string) (*dto.ResponseDto, error)
+	UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto, error)
 }
 
 type postService struct {
@@ -42,8 +41,13 @@ func GetPostService(
 	}
 }
 
-func (s *postService) UploadPost(ctx context.Context, file multipart.File, fileHeader *multipart.FileHeader, userId string) (*dto.ResponseDto, error) {
+func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto, error) {
 	var result dto.ResponseDto
+
+	// File related data
+	file := postReq.File
+	fileHeader := postReq.FileHeader
+	userId := postReq.UserId
 
 	// unique file name
 	fileName := fmt.Sprintf("uploads/%d-%s", time.Now().Unix(), fileHeader.Filename)

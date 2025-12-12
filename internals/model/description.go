@@ -6,7 +6,7 @@ type Description struct {
 	DescriptionId string `gorm:"column:DescriptionId; primaryKey"`
 	ImageId       string `gorm:"column:ImageId"`
 	UserId        string `gorm:"column:UserId"`
-
+	// These details user will post along with image
 	Description string `gorm:"column:Description"`
 	Country     string `gorm:"column:Country"`
 	State       string `gorm:"column:State"`

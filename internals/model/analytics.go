@@ -13,6 +13,7 @@ type Analytic struct {
 	DescriptionId string `gorm:"column:DescriptionId"`
 	UserId        string `gorm:"column:UserId"`
 
+	// Initially these field will be 0
 	Like    int `gorm:"column:Like"`
 	Share   int `gorm:"column:Share"`
 	Comment int `gorm:"column:Comment"`

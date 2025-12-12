@@ -13,7 +13,7 @@ type Commemts struct {
 	ImageId       string `gorm:"column:ImageId"`
 	DescriptionId string `gorm:"column:DescriptionId"`
 	AnalyticId    string `gorm:"column:Analyticid"`
-
+	// initially it will be empty
 	AllComments []Comment `gorm:"column:Comments"`
 }
 

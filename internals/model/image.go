@@ -10,7 +10,7 @@ import (
 type Image struct {
 	ImageId string `gorm:"column:ImageId;primaryKey"`
 	UserId  string `gorm:"column:UserId;not null"`
-
+	// s3 bucket image url
 	ImageUrl string `gorm:"column:ImageUrl; not null"`
 
 	CreatedAt time.Time `gorm:"column:CreatedAt; autoCreateTime"`

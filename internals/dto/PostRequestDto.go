@@ -1,0 +1,18 @@
+package dto
+
+import "mime/multipart"
+
+type PostRequestDto struct {
+	// User
+	UserId string `form:"userId"`
+
+	// Description
+	Description string `form:"description"`
+	Country     string `form:"country"`
+	State       string `form:"state"`
+	City        string `form:"city"`
+
+	// Image
+	File       multipart.File        `form:"file"`
+	FileHeader *multipart.FileHeader `form:"fileHeader"`
+}
