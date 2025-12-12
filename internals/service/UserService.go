@@ -9,7 +9,7 @@ import (
 
 // Interface
 type UserService interface {
-	CreateNewUser(ctx context.Context, user *dto.UserRequestDto) (*dto.UserResponseDto, error)
+	CreateNewUser(ctx context.Context, userReq *dto.UserRequestDto) (*dto.ResponseDto[any], error)
 }
 
 // struct
@@ -26,9 +26,9 @@ func GetNewUserService(r repository.UserRepository, l *slog.Logger) UserService 
 	}
 }
 
-func (s *userService) CreateNewUser(ctx context.Context, userDto *dto.UserRequestDto) (*dto.UserResponseDto, error) {
+func (s *userService) CreateNewUser(ctx context.Context, userReq *dto.UserRequestDto) (*dto.ResponseDto[any], error) {
 	//1. dto -> model
-	user := dto.ToModel(userDto)
+	user := dto.ToModel(userReq)
 
 	//2. service will call to repo
 	savedUser, err := s.userRepo.CreatNewUser(ctx, user)
@@ -37,9 +37,14 @@ func (s *userService) CreateNewUser(ctx context.Context, userDto *dto.UserReques
 		return nil, err
 	}
 
+	s.logger.Info("New user created", "userId", savedUser.UserId)
+
 	//3. model -> dto
-	return &dto.UserResponseDto{
-		Message: "User created successfull",
-		UserId:  savedUser.UserId,
+	return &dto.ResponseDto[any]{
+		Status:  "success",
+		Message: "User created",
+		ResultObj: map[string]interface{}{
+			"userId": savedUser.UserId,
+		},
 	}, nil
 }

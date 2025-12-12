@@ -2,7 +2,6 @@ package controller
 
 import (
 	"log/slog"
-	"net/http"
 	"truthly/internals/dto"
 	"truthly/internals/service"
 
@@ -29,8 +28,8 @@ func (h *UserController) CreateNewUser(ctx *gin.Context) {
 	// binding the data
 	if err := ctx.ShouldBindJSON(&user); err != nil {
 		h.logger.Error(err.Error())
-		ctx.JSON(http.StatusBadRequest, &dto.UserResponseDto{
-			Message: err.Error(),
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
@@ -39,14 +38,11 @@ func (h *UserController) CreateNewUser(ctx *gin.Context) {
 	response, err := h.userService.CreateNewUser(ctx, &user)
 	if err != nil {
 		h.logger.Error(err.Error())
-		ctx.JSON(500, &dto.UserResponseDto{
-			Message: err.Error(),
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
 		})
 		return
 	}
 
-	h.logger.Info("New user created", "userId", response.UserId)
-	ctx.JSON(200, &dto.UserResponseDto{
-		UserId: response.UserId,
-	})
+	ctx.JSON(200, response)
 }

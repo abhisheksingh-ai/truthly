@@ -11,7 +11,7 @@ import (
 )
 
 type PostService interface {
-	UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto, error)
+	UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto[any], error)
 }
 
 type postService struct {
@@ -41,7 +41,7 @@ func GetPostService(
 	}
 }
 
-func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto, error) {
+func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto[any], error) {
 	// File related data
 	fileHeader := postReq.FileHeader
 
@@ -52,7 +52,7 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	imgUrl, err := s.s3Uploader.UploadImage(fileHeader, fileName)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return &dto.ResponseDto{
+		return &dto.ResponseDto[any]{
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
@@ -68,7 +68,7 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	imgRes, err := s.imageRepo.InsertNewImage(ctx, img)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return &dto.ResponseDto{
+		return &dto.ResponseDto[any]{
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
@@ -90,7 +90,7 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	descRes, err := s.descriptionRepo.InsertDescription(ctx, description)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return &dto.ResponseDto{
+		return &dto.ResponseDto[any]{
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
@@ -109,7 +109,7 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	analyticRes, err := s.analyticsRepo.InsertAnalytics(ctx, analytic)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return &dto.ResponseDto{
+		return &dto.ResponseDto[any]{
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
@@ -127,14 +127,14 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	_, err = s.commentRepo.InsertComment(ctx, comment)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return &dto.ResponseDto{
+		return &dto.ResponseDto[any]{
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
 		}, err
 	}
 
-	return &dto.ResponseDto{
+	return &dto.ResponseDto[any]{
 		Status:  "success",
 		Message: "Post created",
 		ResultObj: map[string]interface{}{

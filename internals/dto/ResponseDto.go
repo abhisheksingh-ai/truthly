@@ -1,7 +1,7 @@
 package dto
 
-type ResponseDto struct {
-	Status    string      `json:"status"`
-	Message   string      `json:"message"`
-	ResultObj interface{} `json:"resultObj"`
+type ResponseDto[T any] struct {
+	Status    string `json:"status"`
+	Message   string `json:"message"`
+	ResultObj T      `json:"resultObj"`
 }
