@@ -1,13 +1,15 @@
 package repository
 
 import (
+	"context"
 	"log/slog"
+	"truthly/internals/model"
 
 	"gorm.io/gorm"
 )
 
 type CommentRepository interface {
-	InsertComment()
+	InsertComment(ctx context.Context, comment *model.Commemts) (*model.Commemts, error)
 }
 
 type commentRepository struct {
@@ -23,6 +25,9 @@ func GetCommentRepository(Db *gorm.DB, logger *slog.Logger) CommentRepository {
 	}
 }
 
-func (c *commentRepository) InsertComment() {
-
+func (c *commentRepository) InsertComment(ctx context.Context, comment *model.Commemts) (*model.Commemts, error) {
+	if err := c.Db.WithContext(ctx).Create(comment).Error; err != nil {
+		return nil, err
+	}
+	return comment, nil
 }

@@ -8,7 +8,7 @@ type CommentReqDto struct {
 	DescriptionId string `json:"descriptionId"`
 	AnalyticId    string `json:"analyticid"`
 
-	AllComments []model.Comment `json:"comments"`
+	Comment string `json:"comment"`
 }
 
 func ToCommentModel(c *CommentReqDto) *model.Commemts {
@@ -17,6 +17,6 @@ func ToCommentModel(c *CommentReqDto) *model.Commemts {
 		ImageId:       c.ImageId,
 		DescriptionId: c.DescriptionId,
 		AnalyticId:    c.AnalyticId,
-		AllComments:   c.AllComments,
+		Comment:       c.Comment,
 	}
 }

@@ -42,8 +42,6 @@ func GetPostService(
 }
 
 func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto, error) {
-	var result dto.ResponseDto
-
 	// File related data
 	fileHeader := postReq.FileHeader
 
@@ -54,7 +52,11 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	imgUrl, err := s.s3Uploader.UploadImage(fileHeader, fileName)
 	if err != nil {
 		s.logger.Error(err.Error())
-		return nil, err
+		return &dto.ResponseDto{
+			Status:    "failed",
+			Message:   err.Error(),
+			ResultObj: nil,
+		}, err
 	}
 
 	//2. Insert row in Image table
@@ -64,14 +66,79 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 	}
 
 	imgRes, err := s.imageRepo.InsertNewImage(ctx, img)
+	if err != nil {
+		s.logger.Error(err.Error())
+		return &dto.ResponseDto{
+			Status:    "failed",
+			Message:   err.Error(),
+			ResultObj: nil,
+		}, err
+	}
 
 	// 3. Insert the description row in table like city, state etc
 
-	description, err := 
+	description := &model.Description{
+		ImageId: imgRes.ImageId,
+		UserId:  imgRes.UserId,
+
+		Description: postReq.Description,
+		Country:     postReq.Country,
+		City:        postReq.City,
+		State:       postReq.State,
+	}
+
+	descRes, err := s.descriptionRepo.InsertDescription(ctx, description)
+	if err != nil {
+		s.logger.Error(err.Error())
+		return &dto.ResponseDto{
+			Status:    "failed",
+			Message:   err.Error(),
+			ResultObj: nil,
+		}, err
+	}
 
 	// 4. Analytic like, share, comment initially set 0
 
-	// 5. Comment initally nothing
+	analytic := &model.Analytic{
+		ImageId:       descRes.ImageId,
+		DescriptionId: descRes.DescriptionId,
+		UserId:        descRes.UserId,
+		// other field will be zero
+	}
 
-	return &result, nil
+	analyticRes, err := s.analyticsRepo.InsertAnalytics(ctx, analytic)
+	if err != nil {
+		s.logger.Error(err.Error())
+		return &dto.ResponseDto{
+			Status:    "failed",
+			Message:   err.Error(),
+			ResultObj: nil,
+		}, err
+	}
+
+	// 5. Comment initally nothing
+	comment := &model.Commemts{
+		UserId:        analyticRes.UserId,
+		ImageId:       analyticRes.ImageId,
+		DescriptionId: analyticRes.DescriptionId,
+		AnalyticId:    analyticRes.AnalyticId,
+	}
+
+	_, err = s.commentRepo.InsertComment(ctx, comment)
+	if err != nil {
+		s.logger.Error(err.Error())
+		return &dto.ResponseDto{
+			Status:    "failed",
+			Message:   err.Error(),
+			ResultObj: nil,
+		}, err
+	}
+
+	return &dto.ResponseDto{
+		Status:  "success",
+		Message: "Post created",
+		ResultObj: map[string]string{
+			"imageUrl": imgRes.ImageUrl,
+		},
+	}, nil
 }
