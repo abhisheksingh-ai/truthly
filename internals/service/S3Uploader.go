@@ -44,7 +44,6 @@ func (s *S3Uploader) UploadImage(fileHeader *multipart.FileHeader, fileName stri
 		Bucket: &s.BucketName,
 		Key:    &fileName,
 		Body:   file,
-		ACL:    "public-read",
 	})
 	if err != nil {
 		s.logger.Error(err.Error())
