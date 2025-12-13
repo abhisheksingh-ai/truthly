@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Description struct {
@@ -27,7 +28,7 @@ func (Description) TableName() string {
 	return "Descriptions"
 }
 
-func (d *Description) BeforeCreate() (err error) {
+func (d *Description) BeforeCreate(tx *gorm.DB) (err error) {
 	if d.DescriptionId == "" {
 		d.DescriptionId = uuid.New().String()
 	}

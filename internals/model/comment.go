@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Commemts struct {
@@ -25,10 +26,10 @@ type Commemts struct {
 }
 
 func (Commemts) TableName() string {
-	return "Commemts"
+	return "Comments"
 }
 
-func (c *Commemts) BeforeCreate() (err error) {
+func (c *Commemts) BeforeCreate(tx *gorm.DB) (err error) {
 	if c.DescriptionId == "" {
 		c.DescriptionId = uuid.New().String()
 	}

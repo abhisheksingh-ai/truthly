@@ -16,9 +16,9 @@ type Analytic struct {
 	UserId        string `gorm:"column:UserId"`
 
 	// Initially these field will be 0
-	Like    int `gorm:"column:Like"`
-	Share   int `gorm:"column:Share"`
-	Comment int `gorm:"column:Comment"`
+	Like    int `gorm:"column:LikeCount"`
+	Share   int `gorm:"column:ShareCount"`
+	Comment int `gorm:"column:CommentCount"`
 
 	// dates
 	CreatedAt time.Time `gorm:"column:CreatedAt; autoCreateTime"`
