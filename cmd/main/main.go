@@ -47,7 +47,7 @@ func main() {
 	analyticsRepo := repository.GetAnalyticRepository(db, log)
 	commentRepo := repository.GetCommentRepository(db, log)
 
-	s3Uploader, err := service.NewS3Uploader("uploads", log)
+	s3Uploader, err := service.NewS3Uploader("truthly-images", log)
 	if err != nil {
 		log.Error(err.Error())
 	}
