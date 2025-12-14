@@ -16,10 +16,10 @@ func GetNewPostImageRoutes(postImageController *controller.PostImageController) 
 	}
 }
 
-func (p *PostImageRoutes) RegisterRoutes(router *gin.Engine) {
+func (p *PostImageRoutes) RegisterRoutes(router *gin.RouterGroup) {
 
 	// group
-	postImageGroup := router.Group("/api/v1/posts")
+	postImageGroup := router.Group("/posts")
 
 	// create a new post
 	postImageGroup.POST("/", p.postImageController.PostImage)

@@ -16,10 +16,10 @@ func GetNewFeedRoutes(feedController *controller.FeedController) *FeedRoutes {
 	}
 }
 
-func (fr *FeedRoutes) RegisterRoutes(router *gin.Engine) {
+func (fr *FeedRoutes) RegisterRoutes(router *gin.RouterGroup) {
 
 	// versioned group
-	feedGroup := router.Group("/api/v1/feed")
+	feedGroup := router.Group("/feed")
 
 	// get feed
 	feedGroup.GET("/", fr.feedController.GetFeed)
