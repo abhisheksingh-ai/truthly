@@ -17,8 +17,8 @@ func GetNewUserRoutes(c *controller.UserController) *UserRoutes {
 }
 
 func (ur *UserRoutes) RegisterRoutes(router *gin.Engine) {
-	userGroup := router.Group("/api/users")
+	userGroup := router.Group("/api/v1/users")
 
 	// Create a new user
-	userGroup.POST("/createUser", ur.userController.CreateNewUser)
+	userGroup.POST("/", ur.userController.CreateNewUser)
 }
