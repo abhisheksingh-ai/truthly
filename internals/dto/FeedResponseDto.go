@@ -35,6 +35,7 @@ type AnalyticsDto struct {
 type CommentDto struct {
 	CommentId string `json:"commentId"`
 	UserId    string `json:"userId"`
+	Comment   string `json:"comment"`
 }
 
 type PaginationDto struct {
