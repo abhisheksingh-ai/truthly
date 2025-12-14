@@ -131,6 +131,7 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 			Status:    "failed",
 			Message:   err.Error(),
 			ResultObj: nil,
+			Error:     err.Error(),
 		}, err
 	}
 
