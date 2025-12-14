@@ -11,11 +11,11 @@ type FeedItemDto struct {
 	ImageId  string `json:"imageId"`
 	ImageUrl string `json:"imageUrl"`
 	Caption  string `json:"caption"`
+	UserName string `json:"userName"`
+	UserId   string `json:"UserId"`
 
 	Location  LocationDto  `json:"location"`
 	Analytics AnalyticsDto `json:"analytics"`
-
-	RecentComments []CommentDto `json:"recentComments,omitempty"`
 
 	CreatedAt time.Time `json:"createdAt"`
 }
@@ -30,12 +30,6 @@ type AnalyticsDto struct {
 	Like    int `json:"like"`
 	Share   int `json:"share"`
 	Comment int `json:"comment"`
-}
-
-type CommentDto struct {
-	CommentId string `json:"commentId"`
-	UserId    string `json:"userId"`
-	Comment   string `json:"comment"`
 }
 
 type PaginationDto struct {

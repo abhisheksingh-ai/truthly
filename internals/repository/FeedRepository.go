@@ -18,6 +18,9 @@ type feedRow struct {
 	Caption   string
 	CreatedAt time.Time
 
+	UserName string
+	UserId   string
+
 	Country string
 	City    string
 	State   string
@@ -48,18 +51,25 @@ func (fr *feedRepository) GetFeedItems(ctx context.Context, limit int, cursor st
 				i.ImageId,
 				i.ImageUrl,
 				i.CreatedAt,
+
 				d.Description AS Caption,
 				d.Country,
 				d.State,
 				d.City,
+
 				a.LikeCount,
 				a.CommentCount,
-				a.ShareCount
+				a.ShareCount,
+
+				u.UserId,
+				u.UserName
 			FROM Images i
+			LEFT JOIN Users u ON u.UserId = i.UserId
 			LEFT JOIN Descriptions d ON d.ImageId = i.ImageId
 			LEFT JOIN Analytics a ON a.ImageId = i.ImageId
 			ORDER BY i.CreatedAt DESC
 			LIMIT ?
+
 	`
 
 	err := fr.Db.WithContext(ctx).Raw(query, limit+1).Scan(&rows).Error

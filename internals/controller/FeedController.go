@@ -3,6 +3,7 @@ package controller
 import (
 	"log/slog"
 	"strconv"
+	"truthly/internals/dto"
 	"truthly/internals/service"
 
 	"github.com/gin-gonic/gin"
@@ -31,5 +32,9 @@ func (c *FeedController) GetFeed(ctx *gin.Context) {
 		})
 	}
 
-	ctx.JSON(200, resp)
+	ctx.JSON(200, dto.ResponseDto[any]{
+		Status:    "sucess",
+		Message:   "paginated feed",
+		ResultObj: resp,
+	})
 }

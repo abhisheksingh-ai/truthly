@@ -46,27 +46,7 @@ func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*
 		imageIds = append(imageIds, r.ImageId)
 	}
 
-	//3. Recent comments
-	comments, err := fs.commentRepo.GetRecentComment(ctx, imageIds)
-	if err != nil {
-		fs.logger.Error(err.Error())
-		return nil, err
-	}
-
-	//4. Map comment by imageId
-	commentMap := make(map[string][]dto.CommentDto, 0)
-
-	for _, c := range comments {
-		commentMap[c.ImageId] = append(
-			commentMap[c.ImageId], dto.CommentDto{
-				CommentId: c.CommentId,
-				Comment:   c.Comment,
-				UserId:    c.UserId,
-			},
-		)
-	}
-
-	// 5. final response dto for Feed
+	// 3. final response dto for Feed
 	items := make([]dto.FeedItemDto, 0)
 
 	for _, r := range rows {
@@ -75,6 +55,9 @@ func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*
 			ImageUrl:  r.ImageUrl,
 			Caption:   r.Caption,
 			CreatedAt: r.CreatedAt,
+
+			UserName: r.UserName,
+			UserId:   r.UserId,
 
 			Location: dto.LocationDto{
 				City:    r.City,
@@ -86,7 +69,6 @@ func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*
 				Comment: mustAtoi(r.CommentCount),
 				Share:   mustAtoi(r.ShareCount),
 			},
-			RecentComments: commentMap[r.ImageId],
 		})
 	}
 

@@ -30,8 +30,8 @@ func (Commemts) TableName() string {
 }
 
 func (c *Commemts) BeforeCreate(tx *gorm.DB) (err error) {
-	if c.DescriptionId == "" {
-		c.DescriptionId = uuid.New().String()
+	if c.CommentId == "" {
+		c.CommentId = uuid.New().String()
 	}
 	return
 }
