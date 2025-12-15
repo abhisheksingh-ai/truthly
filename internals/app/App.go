@@ -12,6 +12,13 @@ func Start(logger *slog.Logger) {
 	db := util.InitDb()
 	logger.Info("DB Connected")
 
+	sqlDb, err := db.DB()
+	if err != nil {
+		logger.Error(err.Error())
+		return
+	}
+	defer sqlDb.Close() // Close db connection when the app is shut down
+
 	router := gin.Default()
 
 	// versioned API
