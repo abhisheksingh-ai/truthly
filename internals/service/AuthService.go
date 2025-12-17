@@ -103,7 +103,8 @@ func (s *authService) AddSession(ctx context.Context, sessionId string, userId s
 	err = s.userSessionRepo.CreateNewSession(ctx, &userSession)
 	if err != nil {
 		return &dto.ResponseDto[*dto.LogInRes]{
-			Error: err.Error(),
+			Status: "Error",
+			Error:  err.Error(),
 		}, nil
 	}
 
