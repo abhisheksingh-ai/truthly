@@ -11,20 +11,9 @@ import (
 )
 
 func RegisterAll(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
-
-	registerUser(router, db, logger)
 	registerPost(router, db, logger)
 	registerFeed(router, db, logger)
-}
-
-// user
-func registerUser(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
-
-	userRepo := repository.GetUserRepo(logger, db)
-	userService := service.GetNewUserService(userRepo, logger)
-	userController := controller.GetNewUserController(userService, logger)
-
-	GetNewUserRoutes(userController).RegisterRoutes(router)
+	registerAuth(router, db, logger)
 }
 
 // post
@@ -58,4 +47,21 @@ func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	feedController := controller.GetNewFeedController(logger, feedService)
 
 	GetNewFeedRoutes(feedController).RegisterRoutes(router)
+}
+
+// auth
+func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
+	// repo's required
+	userLoginRepo := repository.GetNewUserLoginRepo(logger, db)
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
+	userRepo := repository.GetUserRepo(logger, db)
+
+	// auth service
+	authService := service.GetNewAuthService(logger, userLoginRepo, userSessionRepo, userRepo)
+
+	// auth controller
+	authController := controller.GetNewAuthController(logger, authService)
+
+	// routes
+	GetNewAuthRoutes(authController).RegisterRoutes(router)
 }

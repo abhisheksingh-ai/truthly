@@ -1,0 +1,51 @@
+package service
+
+import (
+	"context"
+	"log/slog"
+	"truthly/internals/dto"
+	"truthly/internals/repository"
+)
+
+type AuthService interface {
+	UserSignup(ctx context.Context, user *dto.UserRequestDto) (*dto.ResponseDto[any], error)
+}
+
+type authService struct {
+	logger          *slog.Logger
+	userLoginRepo   repository.UserLoginRepository
+	userSessionRepo repository.UserSessionRepository
+	userRepo        repository.UserRepository
+}
+
+func GetNewAuthService(logger *slog.Logger, userLoginRepo repository.UserLoginRepository, userSessionRepo repository.UserSessionRepository, userRepo repository.UserRepository) AuthService {
+	return &authService{
+		logger:          logger,
+		userLoginRepo:   userLoginRepo,
+		userSessionRepo: userSessionRepo,
+		userRepo:        userRepo,
+	}
+}
+
+func (s *authService) UserSignup(ctx context.Context, userReq *dto.UserRequestDto) (*dto.ResponseDto[any], error) {
+	//1. dto -> model
+	user := dto.ToModel(userReq)
+
+	//2. service will call to repo
+	savedUser, err := s.userRepo.CreatNewUser(ctx, user)
+	if err != nil {
+		s.logger.Error("Error while creating a new user, Error: " + err.Error())
+		return nil, err
+	}
+
+	s.logger.Info("New user created", "userId", savedUser.UserId)
+
+	//3. model -> dto
+	return &dto.ResponseDto[any]{
+		Status:  "success",
+		Message: "User created",
+		ResultObj: map[string]interface{}{
+			"userId": savedUser.UserId,
+		},
+	}, nil
+}
