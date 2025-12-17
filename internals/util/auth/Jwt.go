@@ -11,8 +11,8 @@ import (
 )
 
 type JwtClaims struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email  string `json:"email"`
+	UserId string `json:"userId"`
 
 	jwt.RegisteredClaims
 }
@@ -36,10 +36,10 @@ func GetNewAuthToken(logger *slog.Logger) *AuthToken {
 }
 
 // Generate jwt token
-func (at *AuthToken) GenerateJwtToken(email string, password string) (string, string, error) {
+func (at *AuthToken) GenerateJwtToken(email string, userId string) (string, string, error) {
 	claims := JwtClaims{
-		Email:    email,
-		Password: password,
+		Email:  email,
+		UserId: userId,
 
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * time.Hour)),

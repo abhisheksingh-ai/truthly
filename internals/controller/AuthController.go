@@ -72,7 +72,7 @@ func (c *AuthController) UserLogin(ctx *gin.Context) {
 	ctx.Set("userName", data.ResultObj.UserName)
 
 	// generate token
-	token, sessionId, err := c.authUtil.GenerateJwtToken(loginReq.Email, loginReq.Password)
+	token, sessionId, err := c.authUtil.GenerateJwtToken(loginReq.Email, data.ResultObj.UserId)
 	if err != nil {
 		c.logger.Error("Error in token generation", "error", err.Error())
 		ctx.JSON(500, gin.H{
