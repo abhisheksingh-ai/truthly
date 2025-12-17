@@ -17,6 +17,8 @@ type UserSessionRepository interface {
 	) error
 
 	ExpireLastActiveSession(ctx context.Context, userId string) error
+
+	GetActiveSession(ctx context.Context, sessionId string) (*model.UserSession, error)
 }
 
 // for userSessionRepo
@@ -96,4 +98,22 @@ func (us *userSessionRepo) ExpireLastActiveSession(
 	}
 
 	return nil
+}
+
+func (us *userSessionRepo) GetActiveSession(ctx context.Context, sessionId string) (*model.UserSession, error) {
+
+	var userSession model.UserSession
+
+	err := us.Db.WithContext(ctx).
+		Where("SessionId=? AND Status=? AND ExpiredAt > NOW()", sessionId, "ACTIVE").
+		First(&userSession).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, errors.New("Session Id with Active status not found")
+		}
+		return nil, err
+	}
+
+	return &userSession, nil
 }

@@ -24,6 +24,7 @@ func registerPost(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	descriptionRepo := repository.GetDescriptionRepository(db, logger)
 	analyticsRepo := repository.GetAnalyticRepository(db, logger)
 	commentRepo := repository.GetCommentRepository(db, logger)
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
 
 	s3Uploader, err := service.NewS3Uploader("truthly-images", logger)
 	if err != nil {
@@ -35,7 +36,9 @@ func registerPost(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	)
 	postImageController := controller.GetNewPostImageController(logger, postService)
 
-	GetNewPostImageRoutes(postImageController).RegisterRoutes(router)
+	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
+
+	GetNewPostImageRoutes(postImageController, authToken).RegisterRoutes(router)
 
 }
 
@@ -46,8 +49,11 @@ func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	commentRepo := repository.GetCommentRepository(db, logger)
 	feedService := service.GetNewFeedService(feedRepo, commentRepo, logger)
 	feedController := controller.GetNewFeedController(logger, feedService)
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
 
-	GetNewFeedRoutes(feedController).RegisterRoutes(router)
+	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
+
+	GetNewFeedRoutes(feedController, authToken).RegisterRoutes(router)
 }
 
 // auth
@@ -61,7 +67,7 @@ func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	authService := service.GetNewAuthService(logger, userLoginRepo, userSessionRepo, userRepo)
 
 	// utils
-	authUtil := auth.GetNewAuthToken(logger)
+	authUtil := auth.GetNewAuthToken(logger, userSessionRepo)
 
 	// auth controller
 	authController := controller.GetNewAuthController(logger, authService, authUtil)
