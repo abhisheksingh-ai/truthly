@@ -4,6 +4,7 @@ import (
 	"log/slog"
 	"truthly/internals/dto"
 	"truthly/internals/service"
+	"truthly/internals/util/auth"
 
 	"github.com/gin-gonic/gin"
 )
@@ -11,12 +12,14 @@ import (
 type AuthController struct {
 	logger      *slog.Logger
 	authService service.AuthService
+	authUtil    *auth.AuthToken
 }
 
-func GetNewAuthController(logger *slog.Logger, authService service.AuthService) *AuthController {
+func GetNewAuthController(logger *slog.Logger, authService service.AuthService, authUtil *auth.AuthToken) *AuthController {
 	return &AuthController{
 		logger:      logger,
 		authService: authService,
+		authUtil:    authUtil,
 	}
 }
 
@@ -44,4 +47,44 @@ func (c *AuthController) UserSignup(ctx *gin.Context) {
 	}
 
 	ctx.JSON(200, resp)
+}
+
+func (c *AuthController) UserLogin(ctx *gin.Context) {
+	// get the data from request
+	var loginReq dto.LoginReq
+	if err := ctx.ShouldBindJSON(&loginReq); err != nil {
+		c.logger.Error(err.Error())
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+		return
+	}
+
+	// verify mail and store userId and userName in the
+	data, err := c.authService.VerifyMail(ctx, &loginReq)
+	if err != nil {
+		ctx.JSON(404, data)
+		return
+	}
+
+	// set userId and userName in ctx to access it later
+	ctx.Set("userId", data.ResultObj.UserId)
+	ctx.Set("userName", data.ResultObj.UserName)
+
+	// generate token
+	token, sessionId, err := c.authUtil.GenerateJwtToken(loginReq.Email, loginReq.Password)
+	if err != nil {
+		c.logger.Error("Error in token generation", "error", err.Error())
+		ctx.JSON(500, gin.H{
+			"error": err.Error(),
+		})
+	}
+
+	// Add this session in UserSession table
+	res, err := c.authService.AddSession(ctx, sessionId, data.ResultObj.UserId, token)
+	if err != nil {
+		ctx.JSON(500, res)
+	}
+
+	ctx.JSON(200, res)
 }

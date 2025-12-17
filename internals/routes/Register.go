@@ -5,6 +5,7 @@ import (
 	"truthly/internals/controller"
 	"truthly/internals/repository"
 	"truthly/internals/service"
+	"truthly/internals/util/auth"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -59,8 +60,11 @@ func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	// auth service
 	authService := service.GetNewAuthService(logger, userLoginRepo, userSessionRepo, userRepo)
 
+	// utils
+	authUtil := auth.GetNewAuthToken(logger)
+
 	// auth controller
-	authController := controller.GetNewAuthController(logger, authService)
+	authController := controller.GetNewAuthController(logger, authService, authUtil)
 
 	// routes
 	GetNewAuthRoutes(authController).RegisterRoutes(router)

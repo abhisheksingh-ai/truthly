@@ -22,4 +22,7 @@ func (ar *AuthRoutes) RegisterRoutes(router *gin.RouterGroup) {
 
 	// signup
 	authGroup.POST("/signup", ar.authController.UserSignup)
+
+	// login
+	authGroup.POST("/login", ar.authController.UserLogin)
 }

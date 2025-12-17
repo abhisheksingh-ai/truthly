@@ -10,6 +10,7 @@ import (
 type UserSession struct {
 	Id        string    `gorm:"column:Id"`
 	UserId    string    `gorm:"column:UserId"`
+	UserName  string    `gorm:"column:UserName"`
 	SessionId string    `gorm:"column:SessionId"`
 	Status    string    `gorm:"column:Status"`
 	CreatedAt time.Time `gorm:"column:CreatedAt"`
@@ -17,7 +18,7 @@ type UserSession struct {
 }
 
 func (UserSession) TableName() string {
-	return "UserSession"
+	return "UserSessions"
 }
 
 func (u *UserSession) BeforeCreate(tx *gorm.DB) (err error) {
