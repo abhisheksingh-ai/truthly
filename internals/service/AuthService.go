@@ -92,8 +92,15 @@ func (s *authService) AddSession(ctx context.Context, sessionId string, userId s
 		CreatedAt: time.Now(),
 		ExpiredAt: time.Now().Add(24 * time.Hour),
 	}
+	// old session Id ko expired mark kardo
+	err := s.userSessionRepo.ExpireLastActiveSession(ctx, userId)
+	if err != nil {
+		return &dto.ResponseDto[*dto.LogInRes]{
+			Error: err.Error(),
+		}, nil
+	}
 	// repo calling
-	err := s.userSessionRepo.CreateNewSession(ctx, &userSession)
+	err = s.userSessionRepo.CreateNewSession(ctx, &userSession)
 	if err != nil {
 		return &dto.ResponseDto[*dto.LogInRes]{
 			Error: err.Error(),
