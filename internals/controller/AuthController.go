@@ -80,8 +80,19 @@ func (c *AuthController) UserLogin(ctx *gin.Context) {
 		})
 	}
 
+	// SET JWT IN COOKIE
+	ctx.SetCookie(
+		"access_token",
+		token,
+		86400,
+		"/",
+		"",
+		false,
+		true,
+	)
+
 	// Add this session in UserSession table
-	res, err := c.authService.AddSession(ctx, sessionId, data.ResultObj.UserId, token)
+	res, err := c.authService.AddSession(ctx, sessionId, data.ResultObj.UserId, data.ResultObj.UserName, token)
 	if err != nil {
 		ctx.JSON(500, res)
 	}

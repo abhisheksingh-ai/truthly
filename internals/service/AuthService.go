@@ -12,7 +12,7 @@ import (
 type AuthService interface {
 	UserSignup(ctx context.Context, user *dto.UserRequestDto) (*dto.ResponseDto[*dto.LogInRes], error)
 	VerifyMail(ctx context.Context, loginReq *dto.LoginReq) (*dto.ResponseDto[*dto.LogInRes], error)
-	AddSession(ctx context.Context, sessionId string, userId string, token string) (*dto.ResponseDto[*dto.LogInRes], error)
+	AddSession(ctx context.Context, sessionId string, userId string, userName string, token string) (*dto.ResponseDto[*dto.LogInRes], error)
 }
 
 type authService struct {
@@ -82,11 +82,12 @@ func (s *authService) VerifyMail(ctx context.Context, loginReq *dto.LoginReq) (*
 }
 
 // Add session
-func (s *authService) AddSession(ctx context.Context, sessionId string, userId string, token string) (*dto.ResponseDto[*dto.LogInRes], error) {
+func (s *authService) AddSession(ctx context.Context, sessionId string, userId string, userName string, token string) (*dto.ResponseDto[*dto.LogInRes], error) {
 	// data ---> model
 	userSession := model.UserSession{
 		UserId:    userId,
 		SessionId: sessionId,
+		UserName:  userName,
 		Status:    "ACTIVE",
 		CreatedAt: time.Now(),
 		ExpiredAt: time.Now().Add(24 * time.Hour),
@@ -101,7 +102,8 @@ func (s *authService) AddSession(ctx context.Context, sessionId string, userId s
 
 	// return
 	return &dto.ResponseDto[*dto.LogInRes]{
-		Status: "Token created",
+		Status:  "Success",
+		Message: "Log in success",
 		ResultObj: &dto.LogInRes{
 			Token: token,
 		},
