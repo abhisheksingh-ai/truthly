@@ -26,6 +26,12 @@ FROM alpine:latest
 # create workig directory 
 WORKDIR /app
 
+# create the log directory
+RUN mkdir -p /app/logs
+
+#document volume location
+VOLUME [ "/app/logs" ]
+
 #copy only the compiled binary 
 COPY --from=builder /app/app .
 
