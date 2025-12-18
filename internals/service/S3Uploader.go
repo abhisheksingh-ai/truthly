@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"mime/multipart"
+	"os"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -17,7 +18,16 @@ type S3Uploader struct {
 }
 
 func NewS3Uploader(bucket string, logger *slog.Logger) (*S3Uploader, error) {
-	cfg, err := config.LoadDefaultConfig(context.TODO())
+
+	region := os.Getenv("AWS_REGION")
+	if region == "" {
+		return nil, fmt.Errorf("AWS_REGION is not set")
+	}
+
+	cfg, err := config.LoadDefaultConfig(
+		context.TODO(),
+		config.WithRegion(region),
+	)
 
 	if err != nil {
 		return nil, err

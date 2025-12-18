@@ -19,7 +19,7 @@ services:
       - "${MYSQL_PORT}:3306"
 
     volumes:
-      - mysql_data:/var/lib/mysql
+      - F:/Docker/truthly:/var/lib/mysql
 
     restart: always
 
@@ -36,13 +36,10 @@ services:
       - .env
 
     volumes:
-      - ./logs:/app/logs
+      - F:/Docker/goapp:/app/logs
 
     depends_on:
       - mysql
 
     restart: always
 
-
-volumes:
-  mysql_data:
