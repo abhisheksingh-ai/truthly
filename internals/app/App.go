@@ -21,6 +21,14 @@ func Start(logger *slog.Logger) {
 
 	router := gin.Default()
 
+	// health route if my app is runnig
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"status":  "ok",
+			"message": "app is running",
+		})
+	})
+
 	// versioned API
 	api := router.Group("/api/v1")
 
