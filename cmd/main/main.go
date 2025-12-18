@@ -13,7 +13,7 @@ func main() {
 
 	if err := godotenv.Load(); err != nil {
 		log.Error("Error loading env file: " + err.Error())
-		panic(err)
+		//panic(err)
 	}
 
 	app.Start(log)
