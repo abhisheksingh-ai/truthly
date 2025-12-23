@@ -121,6 +121,7 @@ func registerWebsocket(
 			c.Writer,
 			c.Request,
 			authToken,
+			logger,
 		)
 	})
 }

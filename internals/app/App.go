@@ -40,5 +40,6 @@ func Start(logger *slog.Logger) {
 	// register all routes
 	routes.RegisterAll(api, db, logger, hub)
 
+	logger.Info("Server started at :8181")
 	router.Run(":8181")
 }

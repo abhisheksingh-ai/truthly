@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 	"truthly/internals/realtime"
 	"truthly/internals/util/auth"
@@ -20,15 +20,17 @@ func ServeWS(
 	w http.ResponseWriter,
 	r *http.Request,
 	authToken *auth.AuthToken,
+	logger *slog.Logger,
 ) {
-	// 1️⃣ Upgrade FIRST
-	fmt.Print("Hey")
+	// Upgrade FIRST
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
 		return
 	}
 
-	// 2️⃣ Extract token
+	logger.Info("Connection upgraded to ws")
+
+	// Extract token
 	token := r.URL.Query().Get("token")
 	if token == "" {
 		conn.WriteMessage(websocket.CloseMessage,
@@ -37,11 +39,12 @@ func ServeWS(
 				"token required",
 			),
 		)
+		logger.Error("ws conn closed, token missing")
 		conn.Close()
 		return
 	}
 
-	// 3️⃣ Verify token
+	//Verify token
 	claims, err := authToken.VerifyJwtToken(token, r.Context())
 	if err != nil {
 		conn.WriteMessage(websocket.CloseMessage,
@@ -54,7 +57,7 @@ func ServeWS(
 		return
 	}
 
-	// 4️⃣ Create client
+	//Create client
 	client := &realtime.Client{
 		Conn:   conn,
 		Send:   make(chan []byte, 256),
@@ -62,10 +65,10 @@ func ServeWS(
 		UserId: claims.UserId,
 	}
 
-	// 5️⃣ Register client
+	//Register client
 	hub.Register <- client
 
-	// 6️⃣ Start pumps
+	//Start pumps
 	go client.WritePump()
 	go client.ReadPump(hub)
 }

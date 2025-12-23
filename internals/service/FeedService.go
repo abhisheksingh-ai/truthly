@@ -72,6 +72,8 @@ func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*
 		})
 	}
 
+	fs.logger.Info("Feed responseded")
+
 	return &dto.FeedResponseDto{
 		Items: items,
 		Pagination: dto.PaginationDto{
