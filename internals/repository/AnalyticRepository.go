@@ -10,6 +10,7 @@ import (
 
 type AnalyticRepository interface {
 	InsertAnalytics(ctx context.Context, analytic *model.Analytic) (*model.Analytic, error)
+	GetAnalyticsByImageId(ctx context.Context, imageId string) (*model.Analytic, error)
 }
 
 type analyticRepository struct {
@@ -30,4 +31,15 @@ func (a *analyticRepository) InsertAnalytics(ctx context.Context, analytic *mode
 		return nil, err
 	}
 	return analytic, nil
+}
+
+func (a *analyticRepository) GetAnalyticsByImageId(ctx context.Context, imageId string) (*model.Analytic, error) {
+	var analytic model.Analytic
+
+	err := a.Db.WithContext(ctx).Where("ImageId = ?", imageId).First(&analytic).Error
+	if err != nil {
+		a.logger.Error(err.Error())
+		return nil, err
+	}
+	return &analytic, nil
 }
