@@ -3,6 +3,7 @@ package routes
 import (
 	"log/slog"
 	"truthly/internals/controller"
+	"truthly/internals/realtime"
 	"truthly/internals/repository"
 	"truthly/internals/service"
 	"truthly/internals/util/auth"
@@ -11,11 +12,12 @@ import (
 	"gorm.io/gorm"
 )
 
-func RegisterAll(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
+func RegisterAll(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger, hub *realtime.Hub) {
 	registerPost(router, db, logger)
 	registerFeed(router, db, logger)
 	registerAuth(router, db, logger)
 	registerInteraction(router, db, logger)
+	registerWebsocket(router, hub, db, logger)
 }
 
 // post
@@ -95,4 +97,32 @@ func registerInteraction(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logg
 
 	// routes
 	GetNewInteractionRoutes(interactionController, authToken).RegisterRoutes(router)
+}
+
+// websocket
+// websocket
+func registerWebsocket(
+	router *gin.RouterGroup,
+	hub *realtime.Hub,
+	db *gorm.DB,
+	logger *slog.Logger,
+) {
+
+	// repo
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
+
+	// auth token
+	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
+
+	// route group
+	wsGroup := router.Group("/ws")
+
+	wsGroup.GET("/", func(c *gin.Context) {
+		controller.ServeWS(
+			hub,
+			c.Writer,
+			c.Request,
+			authToken,
+		)
+	})
 }

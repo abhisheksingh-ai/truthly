@@ -9,6 +9,8 @@ type Client struct {
 	Send chan []byte
 	// rooms    every image id on screen is room for this client
 	Rooms map[string]bool
+
+	UserId string
 }
 
 // join and leave rooms

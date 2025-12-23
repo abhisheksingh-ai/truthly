@@ -18,6 +18,16 @@ type Hub struct {
 	Broadcast chan Event
 }
 
+func NewHub() *Hub {
+	return &Hub{
+		Clients:    make(map[*Client]bool),
+		RoomsHub:   make(map[string]map[*Client]bool),
+		Register:   make(chan *Client),
+		Unregister: make(chan *Client),
+		Broadcast:  make(chan Event),
+	}
+}
+
 func (h *Hub) Run() {
 	for {
 		select {
