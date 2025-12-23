@@ -114,10 +114,8 @@ func registerWebsocket(
 	// auth token
 	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
 
-	// route group
-	wsGroup := router.Group("/ws")
-
-	wsGroup.GET("/", func(c *gin.Context) {
+	// route
+	router.GET("/ws", func(c *gin.Context) {
 		controller.ServeWS(
 			hub,
 			c.Writer,

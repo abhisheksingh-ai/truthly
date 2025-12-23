@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"net/http"
 	"truthly/internals/realtime"
 	"truthly/internals/util/auth"
@@ -14,28 +15,46 @@ var upgrader = websocket.Upgrader{
 	},
 }
 
-func ServeWS(hub *realtime.Hub, w http.ResponseWriter, r *http.Request, authToken *auth.AuthToken) {
-	// upgrade HTTP to WebSocket
-	//  1. extract token
-	token := r.URL.Query().Get("token")
-	if token == "" {
-		http.Error(w, "token required", http.StatusUnauthorized)
-		return
-	}
-
-	//  2. verify token
-	claims, err := authToken.VerifyJwtToken(token, r.Context())
-	if err != nil {
-		http.Error(w, "invalid token", http.StatusUnauthorized)
-		return
-	}
-
+func ServeWS(
+	hub *realtime.Hub,
+	w http.ResponseWriter,
+	r *http.Request,
+	authToken *auth.AuthToken,
+) {
+	// 1️⃣ Upgrade FIRST
+	fmt.Print("Hey")
 	conn, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		http.Error(w, "WebSocket upgrade failed", http.StatusBadRequest)
 		return
 	}
 
+	// 2️⃣ Extract token
+	token := r.URL.Query().Get("token")
+	if token == "" {
+		conn.WriteMessage(websocket.CloseMessage,
+			websocket.FormatCloseMessage(
+				websocket.ClosePolicyViolation,
+				"token required",
+			),
+		)
+		conn.Close()
+		return
+	}
+
+	// 3️⃣ Verify token
+	claims, err := authToken.VerifyJwtToken(token, r.Context())
+	if err != nil {
+		conn.WriteMessage(websocket.CloseMessage,
+			websocket.FormatCloseMessage(
+				websocket.ClosePolicyViolation,
+				"invalid token",
+			),
+		)
+		conn.Close()
+		return
+	}
+
+	// 4️⃣ Create client
 	client := &realtime.Client{
 		Conn:   conn,
 		Send:   make(chan []byte, 256),
@@ -43,8 +62,10 @@ func ServeWS(hub *realtime.Hub, w http.ResponseWriter, r *http.Request, authToke
 		UserId: claims.UserId,
 	}
 
+	// 5️⃣ Register client
 	hub.Register <- client
 
+	// 6️⃣ Start pumps
 	go client.WritePump()
 	go client.ReadPump(hub)
 }
