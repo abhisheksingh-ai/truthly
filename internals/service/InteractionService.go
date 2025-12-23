@@ -19,7 +19,7 @@ type interactionService struct {
 	analyticsRepo   repository.AnalyticRepository
 }
 
-func GetNewInteractionService(logger *slog.Logger, ir repository.InteractionRepository) InteractionService {
+func GetNewInteractionService(logger *slog.Logger, ir repository.InteractionRepository, analyticsRepo repository.AnalyticRepository) InteractionService {
 	return &interactionService{
 		logger:          logger,
 		interactionRepo: ir,

@@ -15,6 +15,7 @@ func RegisterAll(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	registerPost(router, db, logger)
 	registerFeed(router, db, logger)
 	registerAuth(router, db, logger)
+	registerInteraction(router, db, logger)
 }
 
 // post
@@ -74,4 +75,24 @@ func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 
 	// routes
 	GetNewAuthRoutes(authController).RegisterRoutes(router)
+}
+
+// interaction
+func registerInteraction(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
+	// repo required
+	interactionRepo := repository.GetNewInteractionRepository(db, logger)
+	analyticRepo := repository.GetAnalyticRepository(db, logger)
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
+
+	// service required
+	interactionService := service.GetNewInteractionService(logger, interactionRepo, analyticRepo)
+
+	// auth
+	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
+
+	// controller
+	interactionController := controller.GetNewInteractionController(logger, interactionService)
+
+	// routes
+	GetNewInteractionRoutes(interactionController, authToken).RegisterRoutes(router)
 }
