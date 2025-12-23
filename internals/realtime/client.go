@@ -4,9 +4,47 @@ import "github.com/gorilla/websocket"
 
 type Client struct {
 	// connection
-	conn *websocket.Conn
+	Conn *websocket.Conn
 	// channel for server ---> client message
-	send chan []byte
+	Send chan []byte
 	// rooms    every image id on screen is room for this client
-	rooms map[string]bool
+	Rooms map[string]bool
+}
+
+// join and leave rooms
+func (c *Client) ReadPump(hub *Hub) {
+
+	defer func() {
+		hub.Unregister <- c
+		c.Conn.Close()
+	}()
+
+	for {
+		var msg map[string]string
+		err := c.Conn.ReadJSON(&msg)
+		if err != nil {
+			break
+		}
+
+		if msg["action"] == "JOIN_ROOM" {
+
+			room := msg["roomId"]
+			c.Rooms[room] = true
+
+			if hub.RoomsHub[room] == nil {
+				hub.RoomsHub[room] = make(map[*Client]bool)
+			}
+
+			hub.RoomsHub[room][c] = true
+		}
+	}
+
+}
+
+// write pump
+func (c *Client) WritePump() {
+	defer c.Conn.Close()
+	for msg := range c.Send {
+		c.Conn.WriteMessage(websocket.TextMessage, msg)
+	}
 }

@@ -4,46 +4,46 @@ import "encoding/json"
 
 type Hub struct {
 	// clients
-	clients map[*Client]bool
+	Clients map[*Client]bool
 	// rooms
-	rooms map[string]map[*Client]bool
+	RoomsHub map[string]map[*Client]bool
 
 	// register
-	register chan *Client
+	Register chan *Client
 
 	// unregister
-	unregister chan *Client
+	Unregister chan *Client
 
 	//broadcast channer
-	broadcast chan Event
+	Broadcast chan Event
 }
 
 func (h *Hub) Run() {
 	for {
 		select {
 
-		case client := <-h.register:
-			h.clients[client] = true
+		case client := <-h.Register:
+			h.Clients[client] = true
 
-		case client := <-h.unregister:
+		case client := <-h.Unregister:
 			// clients se hata do
-			delete(h.clients, client)
-			for room := range client.rooms {
+			delete(h.Clients, client)
+			for room := range client.Rooms {
 				// Jis bhi image id se ye client connected h vha se clent ko remove kar do
-				delete(h.rooms[room], client)
+				delete(h.RoomsHub[room], client)
 			}
 			// close the channel for this client
-			close(client.send)
+			close(client.Send)
 
-		case event := <-h.broadcast:
+		case event := <-h.Broadcast:
 			// Is event se related koi client hai
-			if clients, ok := h.rooms[event.RoomId]; ok {
+			if clients, ok := h.RoomsHub[event.RoomId]; ok {
 				msg, _ := json.Marshal(event)
 				for c := range clients {
 					select {
-					case c.send <- msg:
+					case c.Send <- msg:
 					default:
-						delete(h.clients, c)
+						delete(h.Clients, c)
 					}
 				}
 			}
