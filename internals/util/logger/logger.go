@@ -23,7 +23,7 @@ func InitLogger() *slog.Logger {
 		}
 
 		handler := slog.NewJSONHandler(file, &slog.HandlerOptions{
-			Level:     slog.LevelWarn,
+			Level:     slog.LevelInfo,
 			AddSource: true,
 		})
 
