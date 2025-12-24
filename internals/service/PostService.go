@@ -42,6 +42,7 @@ func GetPostService(
 }
 
 func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto[any], error) {
+	s.logger.Info("Uploading image...", "userId", postReq.UserId)
 	// File related data
 	fileHeader := postReq.FileHeader
 
@@ -134,6 +135,10 @@ func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDt
 			Error:     err.Error(),
 		}, err
 	}
+
+	s.logger.Info("All data (Tables) related to this image are updated succesfully",
+		"imageId", imgRes.ImageId, "url", imgRes.ImageUrl,
+	)
 
 	return &dto.ResponseDto[any]{
 		Status:  "success",

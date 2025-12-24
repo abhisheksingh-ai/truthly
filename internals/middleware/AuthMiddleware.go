@@ -29,7 +29,7 @@ func AuthMiddleware(authToken *auth.AuthToken) gin.HandlerFunc {
 		}
 
 		//3. verify token
-		_, err := authToken.VerifyJwtToken(
+		claims, err := authToken.VerifyJwtToken(
 			token,
 			ctx.Request.Context(),
 		)
@@ -39,6 +39,8 @@ func AuthMiddleware(authToken *auth.AuthToken) gin.HandlerFunc {
 			})
 			return
 		}
+
+		ctx.Set("userId", claims.UserId)
 
 		ctx.Next()
 	}
