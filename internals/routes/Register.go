@@ -46,19 +46,21 @@ func registerPost(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 }
 
 // feed
-// Get the images in feed section in pagination form 
+// Get the images in feed section in pagination form
 func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 
-	// repo's 
-	
+	// repo's
+	// Get feed items [{}, {}]
 	feedRepo := repository.GetNewFeedRepository(db, logger)
-	commentRepo := repository.GetCommentRepository(db, logger)
-	feedService := service.GetNewFeedService(feedRepo, commentRepo, logger)
+
+	feedService := service.GetNewFeedService(feedRepo, logger)
 	feedController := controller.GetNewFeedController(logger, feedService)
+
+	// protected routes
 	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
-
+	// for verify the token
 	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
-
+	// register routes in /GET 
 	GetNewFeedRoutes(feedController, authToken).RegisterRoutes(router)
 }
 

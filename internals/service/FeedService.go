@@ -19,21 +19,19 @@ type FeedService interface {
 
 type feedService struct {
 	feedRepo    repository.FeedRepository
-	commentRepo repository.CommentRepository
 	logger      *slog.Logger
 }
 
-func GetNewFeedService(fr repository.FeedRepository, commentRepo repository.CommentRepository, l *slog.Logger) FeedService {
+func GetNewFeedService(fr repository.FeedRepository, l *slog.Logger) FeedService {
 	return &feedService{
 		feedRepo:    fr,
-		commentRepo: commentRepo,
 		logger:      l,
 	}
 }
 
 func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*dto.FeedResponseDto, error) {
 
-	//1. Get FeedRows
+	//1. Get FeedRows [{imageId: xyz}, {imageId: abc},]
 	rows, nextCursor, hasMore, err := fs.feedRepo.GetFeedItems(ctx, limit, cursor)
 	if err != nil {
 		fs.logger.Error(err.Error())
@@ -58,7 +56,7 @@ func (fs *feedService) GetFeed(ctx context.Context, limit int, cursor string) (*
 
 			UserName: r.UserName,
 			UserId:   r.UserId,
-
+			// these grouping is difference than feedRow struct
 			Location: dto.LocationDto{
 				City:    r.City,
 				State:   r.State,
