@@ -46,8 +46,11 @@ func registerPost(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 }
 
 // feed
+// Get the images in feed section in pagination form 
 func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 
+	// repo's 
+	
 	feedRepo := repository.GetNewFeedRepository(db, logger)
 	commentRepo := repository.GetCommentRepository(db, logger)
 	feedService := service.GetNewFeedService(feedRepo, commentRepo, logger)

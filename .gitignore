@@ -1,3 +1,4 @@
 .env
 
 logs/app.json
+cmd/main/logs/app.json

@@ -42,6 +42,7 @@ func GetNewFeedRepository(db *gorm.DB, logger *slog.Logger) FeedRepository {
 	}
 }
 
+// return array of feedRow.  [{}, {}, {}, {}....]
 func (fr *feedRepository) GetFeedItems(ctx context.Context, limit int, cursor string) ([]feedRow, string, bool, error) {
 
 	var rows []feedRow
