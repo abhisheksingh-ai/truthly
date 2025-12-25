@@ -61,21 +61,27 @@ func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 
 // auth
 func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
-	// repo's required
-	userLoginRepo := repository.GetNewUserLoginRepo(logger, db)
+	//repos
+	// to delete last ACTIVE session and add new session
 	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
+	// to add the new user in signup
 	userRepo := repository.GetUserRepo(logger, db)
 
 	// auth service
-	authService := service.GetNewAuthService(logger, userLoginRepo, userSessionRepo, userRepo)
+	// User signup, verify mail and add session
+	authService := service.GetNewAuthService(logger, userSessionRepo, userRepo)
 
 	// utils
+	// generate jwt token
 	authUtil := auth.GetNewAuthToken(logger, userSessionRepo)
 
 	// auth controller
+	// handle signup and login
 	authController := controller.GetNewAuthController(logger, authService, authUtil)
 
 	// routes
+	// auth/signup
+	// auth/login
 	GetNewAuthRoutes(authController).RegisterRoutes(router)
 }
 

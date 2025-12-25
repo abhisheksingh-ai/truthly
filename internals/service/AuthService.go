@@ -17,15 +17,13 @@ type AuthService interface {
 
 type authService struct {
 	logger          *slog.Logger
-	userLoginRepo   repository.UserLoginRepository
 	userSessionRepo repository.UserSessionRepository
 	userRepo        repository.UserRepository
 }
 
-func GetNewAuthService(logger *slog.Logger, userLoginRepo repository.UserLoginRepository, userSessionRepo repository.UserSessionRepository, userRepo repository.UserRepository) AuthService {
+func GetNewAuthService(logger *slog.Logger, userSessionRepo repository.UserSessionRepository, userRepo repository.UserRepository) AuthService {
 	return &authService{
 		logger:          logger,
-		userLoginRepo:   userLoginRepo,
 		userSessionRepo: userSessionRepo,
 		userRepo:        userRepo,
 	}
@@ -35,7 +33,7 @@ func (s *authService) UserSignup(ctx context.Context, userReq *dto.UserRequestDt
 	//1. dto -> model
 	user := dto.ToModel(userReq)
 
-	//2. service will call to repo
+	//2. creating a new user
 	savedUser, err := s.userRepo.CreatNewUser(ctx, user)
 	if err != nil {
 		s.logger.Error("Error while creating a new user, Error: " + err.Error())
@@ -59,7 +57,7 @@ func (s *authService) VerifyMail(ctx context.Context, loginReq *dto.LoginReq) (*
 	// mail
 	email := loginReq.Email
 
-	// call repo and verfiy
+	// to verify the mail
 	res, err := s.userRepo.VerifyMail(ctx, email)
 	if err != nil {
 		s.logger.Error(err.Error())
