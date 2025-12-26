@@ -43,7 +43,18 @@ func GetPostService(
 
 func (s *postService) UploadPost(ctx context.Context, postReq *dto.PostRequestDto) (*dto.ResponseDto[any], error) {
 	s.logger.Info("Uploading image...", "userId", postReq.UserId)
-	// File related data
+
+	// 1. validate file
+	if postReq.FileHeader == nil {
+		s.logger.Error("no image file provided in request")
+
+		return &dto.ResponseDto[any]{
+			Status:    "failed",
+			Message:   "image file is required",
+			ResultObj: nil,
+		}, fmt.Errorf("image file is required")
+	}
+
 	fileHeader := postReq.FileHeader
 
 	// unique file name
