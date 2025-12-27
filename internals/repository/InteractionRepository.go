@@ -59,7 +59,7 @@ func (r *interactionRepository) AddComment(ctx context.Context, userId, imageId,
 		//1. Get Analytics row
 		var analytic *model.Analytic
 
-		err := tx.Where("Imageid = ?").
+		err := tx.Where("Imageid = ?", imageId).
 			First(&analytic).Error
 
 		if err != nil {
