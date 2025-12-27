@@ -16,7 +16,7 @@ func RegisterAll(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger, hub 
 	registerPost(router, db, logger)
 	registerFeed(router, db, logger)
 	registerAuth(router, db, logger)
-	registerInteraction(router, db, logger)
+	registerInteraction(router, db, logger, hub)
 	registerWebsocket(router, hub, db, logger)
 }
 
@@ -60,7 +60,7 @@ func registerFeed(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
 	// for verify the token
 	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
-	// register routes in /GET 
+	// register routes in /GET
 	GetNewFeedRoutes(feedController, authToken).RegisterRoutes(router)
 }
 
@@ -91,14 +91,14 @@ func registerAuth(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
 }
 
 // interaction
-func registerInteraction(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
+func registerInteraction(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger, hub *realtime.Hub) {
 	// repo required
 	interactionRepo := repository.GetNewInteractionRepository(db, logger)
 	analyticRepo := repository.GetAnalyticRepository(db, logger)
 	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
 
 	// service required
-	interactionService := service.GetNewInteractionService(logger, interactionRepo, analyticRepo)
+	interactionService := service.GetNewInteractionService(logger, interactionRepo, analyticRepo, hub)
 
 	// auth
 	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
