@@ -61,7 +61,8 @@ func (s *S3Uploader) UploadImage(fileHeader *multipart.FileHeader, fileName stri
 	}
 
 	// 3. Generate the image URL
-	url := fmt.Sprintf("https://%s.s3.amazonaws.com/%s", s.BucketName, fileName)
+	// this is cloudfront domain
+	url := fmt.Sprintf("https://d316g795lwuaau.cloudfront.net/%s", fileName)
 	s.logger.Info("Image is uploaded on s3 bucket", "imageUrl", url)
 
 	return url, nil
