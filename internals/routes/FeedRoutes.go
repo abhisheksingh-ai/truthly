@@ -26,5 +26,8 @@ func (fr *FeedRoutes) RegisterRoutes(router *gin.RouterGroup) {
 	feedGroup := router.Group("/feed")
 
 	// get feed
-	feedGroup.GET("/", fr.authMiddleware, fr.feedController.GetFeed)
+	// feedGroup.GET("/", fr.authMiddleware, fr.feedController.GetFeed)
+
+	// removd authentication in feed
+	feedGroup.GET("", fr.feedController.GetFeed)
 }

@@ -6,6 +6,7 @@ import (
 	"truthly/internals/routes"
 	"truthly/internals/util"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -21,6 +22,16 @@ func Start(logger *slog.Logger) {
 	defer sqlDb.Close() // Close db connection when the app is shut down
 
 	router := gin.Default()
+
+	// ADD CORS Policy
+	router.Use(cors.New(cors.Config{
+		AllowOrigins: []string{
+			"http://localhost:3000",
+		},
+		AllowMethods:     []string{"GET", "POST"},
+		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin"},
+		AllowCredentials: true,
+	}))
 
 	// health route if my app is runnig
 	router.GET("/", func(c *gin.Context) {
