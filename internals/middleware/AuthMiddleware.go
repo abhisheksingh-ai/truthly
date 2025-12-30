@@ -10,6 +10,11 @@ import (
 
 func AuthMiddleware(authToken *auth.AuthToken) gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+		// for OPTION preflight
+		if ctx.Request.Method == http.MethodOptions {
+			ctx.AbortWithStatus(http.StatusNoContent)
+			return
+		}
 		//1. Authorization Header
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {

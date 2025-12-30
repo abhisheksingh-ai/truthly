@@ -26,9 +26,9 @@ func Start(logger *slog.Logger) {
 	// ADD CORS Policy
 	router.Use(cors.New(cors.Config{
 		AllowOrigins: []string{
-			"http://localhost:3000",
+			"http://localhost:3000", "http://127.0.0.1/*",
 		},
-		AllowMethods:     []string{"GET", "POST"},
+		AllowMethods:     []string{"GET", "POST", "OPTIONS"},
 		AllowHeaders:     []string{"Content-Type", "Authorization", "Origin"},
 		AllowCredentials: true,
 	}))
