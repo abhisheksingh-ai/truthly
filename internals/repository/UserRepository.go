@@ -13,6 +13,8 @@ type UserRepository interface {
 	// Inser a new user
 	CreatNewUser(ctx context.Context, user *model.User) (*model.User, error)
 	VerifyMail(ctx context.Context, mail string) (*model.User, error)
+
+	GetUserById(ctx context.Context, userId string) (*model.User, error)
 }
 
 type userRepository struct {
@@ -54,5 +56,25 @@ func (ur *userRepository) VerifyMail(ctx context.Context, email string) (*model.
 		ur.logger.Error(err.Error())
 		return nil, err
 	}
+	return &user, nil
+}
+
+// Get user details by user id to show on home page
+func (ur *userRepository) GetUserById(ctx context.Context, userId string) (*model.User, error) {
+	var user model.User
+
+	err := ur.db.WithContext(ctx).
+		Where("UserId = ?", userId).
+		First(&user).Error
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			ur.logger.Error("User not found", "userId", userId)
+			return nil, err
+		}
+		ur.logger.Error(err.Error())
+		return nil, err
+	}
+
 	return &user, nil
 }

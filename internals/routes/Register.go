@@ -136,3 +136,21 @@ func registerWebsocket(
 		)
 	})
 }
+
+// user
+func registerUser(router *gin.RouterGroup, db *gorm.DB, logger *slog.Logger) {
+	// repo
+	userRepo := repository.GetUserRepo(logger, db)
+	userSessionRepo := repository.GetNewUserSessionRepo(logger, db)
+
+	// service
+	userService := service.GetNewUserService(logger, userRepo)
+
+	// token
+	authToken := auth.GetNewAuthToken(logger, userSessionRepo)
+
+	// controller
+	userController := controller.GetNewUserController(userService)
+
+	GetNewUserRoutes(userController, authToken).RegisterRoutes(router)
+}

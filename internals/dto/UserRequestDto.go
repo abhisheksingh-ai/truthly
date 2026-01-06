@@ -24,6 +24,16 @@ type UserResponseDto struct {
 	UserId  string `json:"userId"`
 }
 
+type UserDetailsForHome struct {
+	FirstName string `json:"firstName,omitempty"`
+	LastName  string `json:"lastName,omitempty"`
+	UserName  string `json:"userName,omitempty"`
+
+	City    string `json:"city,omitempty"`
+	State   string `json:"state,omitempty"`
+	Country string `json:"country,omitempty"`
+}
+
 // DTO → Model
 
 func ToModel(u *UserRequestDto) *model.User {

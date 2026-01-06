@@ -15,6 +15,7 @@ func GetNewAuthRoutes(authController *controller.AuthController) *AuthRoutes {
 		authController: authController,
 	}
 }
+// api/v1/auth
 
 func (ar *AuthRoutes) RegisterRoutes(router *gin.RouterGroup) {
 	// grouping auth

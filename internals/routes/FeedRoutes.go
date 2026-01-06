@@ -20,6 +20,7 @@ func GetNewFeedRoutes(feedController *controller.FeedController, authToken *auth
 	}
 }
 
+// api/v1/feed
 func (fr *FeedRoutes) RegisterRoutes(router *gin.RouterGroup) {
 
 	// versioned group

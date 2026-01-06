@@ -20,6 +20,7 @@ func GetNewPostImageRoutes(postImageController *controller.PostImageController, 
 	}
 }
 
+// api/v1/posts
 func (p *PostImageRoutes) RegisterRoutes(router *gin.RouterGroup) {
 
 	// group
